@@ -11,5 +11,10 @@ pipeline {
                 echo "This is example 2"
             }
         }
+        stage('Example 3') {
+            steps {
+                echo "it is for the branch Blue Ocean"
+            }
+        }
     }
 }
