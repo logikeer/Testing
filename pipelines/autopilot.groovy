@@ -38,8 +38,11 @@ node() {
              doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
              userRemoteConfigs: [[credentialsId: "b6daa83e-1669-4908-baee-554f27a49a40", 
              refspec: '', url: 'git@github.com:logikeer/Testing.git']]]
-			 
-	def fileList = Arrays.asList(new File(currentPath).listFiles())
+
+    def fileList=[]
+    (currentPath as File).eachFile groovy.io.FileType.DIRECTORIES, {
+        fileList << it
+    }
 	echo "${fileList}"
 }
 
