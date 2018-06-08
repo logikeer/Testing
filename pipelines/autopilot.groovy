@@ -42,6 +42,7 @@ node() {
     def fileList=[]
     (currentPath as File).eachFile groovy.io.FileType.DIRECTORIES, {
         fileList << it
+		echo "${it}"
     }
 	echo "${fileList}"
 }
