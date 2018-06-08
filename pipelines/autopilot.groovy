@@ -32,6 +32,11 @@ echo "current hour is ${currentHour}"
 
 node() {
     echo "${env.WORKSPACE}"
+	
+	checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: 'test/dynamic_pipeline_in_Lift']], 
+             doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
+             userRemoteConfigs: [[credentialsId: "b6daa83e-1669-4908-baee-554f27a49a40", 
+             refspec: '', url: 'git@github.com:logikeer/Testing.git']]]
 }
 
 /*
