@@ -34,7 +34,7 @@ node() {
     def currentPath = "${env.WORKSPACE}\\pipelines\\autopilot_params\\${currentHour}"
 	echo "${currentPath}"
 	
-	git branch: 'test/dynamic_pipeline_in_Lift', changelog: false, credentialsId: 'b6daa83e-1669-4908-baee-554f27a49a40', poll: false, url: 'git@github.com:logikeer/Testing.git'
+	checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: 'test/dynamic_pipeline_in_Lift']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CloneOption', depth: 0, noTags: true, reference: '', shallow: false, timeout: 60], [$class: 'CheckoutOption', timeout: 60]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'b6daa83e-1669-4908-baee-554f27a49a40', url: 'git@github.com:logikeer/Testing.git']]]
 
     //def fileList = []
     //(currentPath as File).eachFile groovy.io.FileType.FILES, {
