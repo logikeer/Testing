@@ -39,11 +39,11 @@ node() {
              userRemoteConfigs: [[credentialsId: "b6daa83e-1669-4908-baee-554f27a49a40", 
              refspec: '', url: 'git@github.com:logikeer/Testing.git']]]
 
-    def fileList = []
-    (currentPath as File).eachFile groovy.io.FileType.FILES, {
-        fileList << it
-    }
-	echo "${fileList}"
+    //def fileList = []
+    //(currentPath as File).eachFile groovy.io.FileType.FILES, {
+    //    fileList << it
+    //}
+	//echo "${fileList}"
 }
 
 /*
@@ -59,8 +59,7 @@ if(customPipeline == null) {
     echo "pipeline is null, creating pipeline..."
     customPipeline = customFolder.createProject(WorkflowJob.class, "customPipeline");
 }
-*/
-/*
+
 ParameterDefinition paramDef = new StringParameterDefinition("VM_CREATOR", "vmware");
 customPipeline.addProperty(new ParametersDefinitionProperty(paramDef));
 
