@@ -30,7 +30,7 @@ def now = new Date()
 def currentHour = now.format("HH", TimeZone.getDefault())
 echo "current hour is ${currentHour}"
 
-echo "${workspace}"
+echo "${WORKSPACE}"
 
 /*
 Folder customFolder = Jenkins.getInstance().getItem("customFolder")
