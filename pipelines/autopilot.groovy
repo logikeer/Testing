@@ -30,8 +30,7 @@ def now = new Date()
 def currentHour = now.format("HH", TimeZone.getDefault())
 echo "current hour is ${currentHour}"
 
-def files = findFiles(glob: '*.*')
-echo "${files}"
+echo "${env}"
 
 /*
 Folder customFolder = Jenkins.getInstance().getItem("customFolder")
