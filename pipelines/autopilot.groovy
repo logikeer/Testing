@@ -21,7 +21,7 @@ if(liftFolder == null) {
    liftFolder = Jenkins.getInstance().createProject(Folder.class, defaultFolderName);
 }
 
-autoPilotView = liftFolder.getView(defaultViewName)
+def autoPilotView = liftFolder.getView(defaultViewName)
 if(autoPilotView == null) {
     liftFolder.addView(new ListView(defaultViewName))
 }
@@ -36,11 +36,11 @@ node() {
 	
 	checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: 'test/dynamic_pipeline_in_Lift']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CloneOption', depth: 0, noTags: true, reference: '', shallow: false, timeout: 60], [$class: 'CheckoutOption', timeout: 60]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'b6daa83e-1669-4908-baee-554f27a49a40', url: 'git@github.com:logikeer/Testing.git']]]
 
-    //def fileList = []
-    //(currentPath as File).eachFile groovy.io.FileType.FILES, {
-    //    fileList << it
-    //}
-	//echo "${fileList}"
+    def fileList = []
+    (currentPath as File).eachFile groovy.io.FileType.FILES, {
+        fileList << it
+    }
+	echo "${fileList}"
 }
 
 /*
