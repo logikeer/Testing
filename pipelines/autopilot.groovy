@@ -62,7 +62,15 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 	}
 	
 	jobList.each {
-		print it
+		String extendPath = it - (currentPath + '\\')
+		echo "extendPath: ${extendPath}"
+		
+		String[] componentList = extendPath.split('\\\\')
+		echo "componentList: ${componentList}"
+		
+		componentList.eachWithIndex { it, idx ->
+			echo "${idx}: ${it}"
+		}
 	}
 }
 
