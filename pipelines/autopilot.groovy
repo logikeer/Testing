@@ -10,22 +10,9 @@ import org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
 import org.jenkinsci.plugins.workflow.job.WorkflowRun
 
-def defaultFolderName = 'Lift'
-def defaultViewName = 'AutoPilot'
 
 //def jobs = Hudson.instance.getAllItems(WorkflowJob)*.fullName
 //echo "${jobs}"
-/*
-Folder liftFolder = Jenkins.getInstance().getItem(defaultFolderName)
-if(liftFolder == null) {
-   liftFolder = Jenkins.getInstance().createProject(Folder.class, defaultFolderName);
-}
-
-def autoPilotView = liftFolder.getView(defaultViewName)
-if(autoPilotView == null) {
-    autoPilotView = liftFolder.addView(new ListView(defaultViewName))
-}
-*/
 
 def pullLiftBranch(lift_branch) {
 	echo "git is pulling ${lift_branch}..."
@@ -52,11 +39,32 @@ def getCurrentPath(currentHour) {
 }
 
 def getJobList(currentPath) {
-    def fileList = []
-    (currentPath as File).eachFile groovy.io.FileType.FILES, {
-        fileList << it
+    def jobList = []
+    (currentPath as File).eachFileRecurse groovy.io.FileType.FILES, {
+        jobList << it
     }
-	echo "${fileList}"
+	echo "Job list: ${jobList}"
+}
+
+def updateJobInJenkins(jobList) {
+	echo "update job(s)...."
+	
+	def defaultFolderName = 'Lift'
+	def defaultViewName = 'AutoPilot'
+
+	Folder liftFolder = Jenkins.getInstance().getItem(defaultFolderName)
+	if(liftFolder == null) {
+		liftFolder = Jenkins.getInstance().createProject(Folder.class, defaultFolderName);
+	}
+	
+	def autoPilotView = liftFolder.getView(defaultViewName)
+	if(autoPilotView == null) {
+		autoPilotView = liftFolder.addView(new ListView(defaultViewName))
+	}
+}
+
+def triggerJobInJenkins(jobList) {
+	echo "trigger job(s)...."
 }
 
 node() {
@@ -64,7 +72,9 @@ node() {
     def currentHour = getCurrentHour()
 	def currentPath = getCurrentPath(currentHour)
 	
-	getJobList(currentPath)
+	def jobList = getJobList(currentPath)
+	updateJobInJenkins(jobList)
+	triggerJobInJenkins(jobList)
 }
 
 /*
