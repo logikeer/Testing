@@ -48,7 +48,7 @@ def getJobList(currentPath) {
 	return jobList
 }
 
-@NonCPS
+//@NonCPS
 def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath) {
 	echo "update job(s)...."
 	
