@@ -61,17 +61,30 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 		autoPilotView = liftFolder.addView(new ListView(defaultViewName))
 	}
 	
-	String[] componentList = []
-	jobList.each {
-		String extendPath = it - (currentPath + '\\')
+	for(i=0; i<jobList.size(); i++) {
+		String extendPath = jobList[i] - (currentPath + '\\')
 		echo "extendPath: ${extendPath}"
 		
-		componentList = extendPath.split('\\\\')
+		String[] componentList = extendPath.split('\\\\')
 		echo "componentList: ${componentList}"
-		
-		componentList.eachWithIndex { it, idx ->
-			echo "${idx}: ${it}"
+
+		// create folder
+		Folder folder = liftFolder
+		for(j=0; j<componentList.size()-1; j++) {
+			// if this is the 1st folder, add this folder in the view
+			folderInstance = folder.getItem(componentList[i]);
+			if(folderInstance == null) {
+				folder = folder.createProject(Folder.class, componentList[i])
+				if(j == 0) {
+					autoPilotView.add(folder)
+				}
+			} else {
+				folder = folderInstance
+			}
+			print folder
 		}
+		
+		// create job
 	}
 }
 
