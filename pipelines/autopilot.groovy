@@ -11,9 +11,6 @@ import org.jenkinsci.plugins.workflow.job.WorkflowJob
 import org.jenkinsci.plugins.workflow.job.WorkflowRun
 
 
-def defaultFolderName = 'Lift'
-def defaultViewName = 'AutoPilot'
-
 //def jobs = Hudson.instance.getAllItems(WorkflowJob)*.fullName
 //echo "${jobs}"
 
@@ -51,7 +48,7 @@ def getJobList(currentPath) {
 	return jobList
 }
 
-def updateJobInJenkins(jobList, currentPath) {
+def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath) {
 	echo "update job(s)...."
 	
 	Folder liftFolder = Jenkins.getInstance().getItem(defaultFolderName)
@@ -69,11 +66,14 @@ def updateJobInJenkins(jobList, currentPath) {
 	}
 }
 
-def triggerJobInJenkins(jobList, currentPath) {
+def triggerJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath) {
 	echo "trigger job(s)...."
 }
 
 node() {
+	def defaultFolderName = 'Lift'
+	def defaultViewName = 'AutoPilot'
+
 	pullLiftBranch('test/dynamic_pipeline_in_Lift')
     def currentHour = getCurrentHour()
 	def currentPath = getCurrentPath(currentHour)
@@ -84,8 +84,8 @@ node() {
 		System.exit(0)
 	}
 	
-	updateJobInJenkins(jobList, currentPath)
-	triggerJobInJenkins(jobList, currentPath)
+	updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
+	triggerJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 }
 
 /*
