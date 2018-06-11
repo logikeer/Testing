@@ -15,7 +15,7 @@ def defaultViewName = 'AutoPilot'
 
 //def jobs = Hudson.instance.getAllItems(WorkflowJob)*.fullName
 //echo "${jobs}"
-
+/*
 Folder liftFolder = Jenkins.getInstance().getItem(defaultFolderName)
 if(liftFolder == null) {
    liftFolder = Jenkins.getInstance().createProject(Folder.class, defaultFolderName);
@@ -23,24 +23,48 @@ if(liftFolder == null) {
 
 def autoPilotView = liftFolder.getView(defaultViewName)
 if(autoPilotView == null) {
-    liftFolder.addView(new ListView(defaultViewName))
+    autoPilotView = liftFolder.addView(new ListView(defaultViewName))
+}
+*/
+
+def pullLiftBranch(lift_branch) {
+	echo "git is pulling ${lift_branch}"
+	
+	checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: lift_branch]], 
+	         doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
+			 userRemoteConfigs: [[credentialsId: 'b6daa83e-1669-4908-baee-554f27a49a40', 
+			 url: 'git@github.com:logikeer/Testing.git']]]
 }
 
-def now = new Date()
-def currentHour = now.format("HH", TimeZone.getDefault())
-echo "current hour is ${currentHour}"
-
-node() {
-    def currentPath = "${env.WORKSPACE}\\pipelines\\autopilot_params\\${currentHour}"
-	echo "${currentPath}"
+def getCurrentHour() {
+	def now = new Date()
+	def currentHour = now.format("HH", TimeZone.getDefault())
+	echo "current hour is ${currentHour}"
 	
-	checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: 'test/dynamic_pipeline_in_Lift']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CloneOption', depth: 0, noTags: true, reference: '', shallow: false, timeout: 60], [$class: 'CheckoutOption', timeout: 60]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'b6daa83e-1669-4908-baee-554f27a49a40', url: 'git@github.com:logikeer/Testing.git']]]
+	return currentHour
+}
 
+def getCurrentPath(currentHour) {
+	def currentPath = "${env.WORKSPACE}\\pipelines\\autopilot_params\\${currentHour}"
+	echo "current path is ${currentPath}"
+	
+	return currentPath
+}
+
+def getJobList(currentPath) {
     def fileList = []
     (currentPath as File).eachFile groovy.io.FileType.FILES, {
         fileList << it
     }
 	echo "${fileList}"
+}
+
+node() {
+	pullLiftBranch('test/dynamic_pipeline_in_Lift')
+    def currentHour = getCurrentHour()
+	def currentPath = getCurrentPath(currentHour)
+	
+	getJobList(currentPath)
 }
 
 /*
@@ -49,6 +73,7 @@ if(customFolder == null) {
     echo "folder is null, creating folder..."
     customFolder = Jenkins.getInstance().createProject(Folder.class, "customFolder");
     customView.add(customFolder)
+
 }
 
 WorkflowJob customPipeline = customFolder.getItem("customPipeline")
