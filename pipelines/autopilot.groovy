@@ -63,6 +63,8 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 	}
 	
 	for(i=0; i<jobList.size(); i++) {
+		echo "process job: ${jobList[i]}"
+		
 		String extendPath = jobList[i] - (currentPath + '\\')
 		echo "extendPath: ${extendPath}"
 		
