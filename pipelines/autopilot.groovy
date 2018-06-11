@@ -51,7 +51,7 @@ def getJobList(currentPath) {
 	return jobList
 }
 
-def updateJobInJenkins(jobList) {
+def updateJobInJenkins(jobList, currentPath) {
 	echo "update job(s)...."
 	
 	Folder liftFolder = Jenkins.getInstance().getItem(defaultFolderName)
@@ -69,7 +69,7 @@ def updateJobInJenkins(jobList) {
 	}
 }
 
-def triggerJobInJenkins(jobList) {
+def triggerJobInJenkins(jobList, currentPath) {
 	echo "trigger job(s)...."
 }
 
