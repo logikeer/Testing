@@ -61,11 +61,12 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 		autoPilotView = liftFolder.addView(new ListView(defaultViewName))
 	}
 	
+	String[] componentList = []
 	jobList.each {
 		String extendPath = it - (currentPath + '\\')
 		echo "extendPath: ${extendPath}"
 		
-		String[] componentList = extendPath.split('\\\\')
+		componentList = extendPath.split('\\\\')
 		echo "componentList: ${componentList}"
 		
 		componentList.eachWithIndex { it, idx ->
