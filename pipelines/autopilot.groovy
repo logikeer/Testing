@@ -102,10 +102,15 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 		}
 
 		// update pipeline content
-		//ParameterDefinition paramDef = new StringParameterDefinition("VM_CREATOR", "vmware");
-		//pipeline.addProperty(new ParametersDefinitionProperty(paramDef));
 		pipeline.removeProperty(ParametersDefinitionProperty.class);
-
+		def parameterFile = load "${jobList[i]}"
+		for (it in map) {
+			echo "${it.key} = ${it.value}"
+			
+			ParameterDefinition paramDef = new StringParameterDefinition("${it.key}", "${it.value}");
+			pipeline.addProperty(new ParametersDefinitionProperty(paramDef));
+		}
+		
 		pipeline.buildDiscarder = new hudson.tasks.LogRotator(10, 20, -1, -1)
 		
 		CloneOption cloneOption = new CloneOption(false, true, null, 60);
