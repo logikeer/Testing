@@ -74,22 +74,52 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 			// if this is the 1st folder, add this folder in the view
 			folderInstance = folder.getItem(componentList[i]);
 			if(folderInstance == null) {
+				echo "folder is null, creating folder ${componentList[i]}"
 				folder = folder.createProject(Folder.class, componentList[i])
 				if(j == 0) {
+					echo "add folder ${componentList[i]} in view"
 					autoPilotView.add(folder)
 				}
 			} else {
+				echo "go to folder ${componentList[i]}"
 				folder = folderInstance
 			}
-			print folder
 		}
 		
 		// create job
-	}
-}
+		String jobName = componentList[componentList.size()-1]
+		WorkflowJob job = customFolder.getItem(jobName)
+		if(job == null) {
+			echo "pipeline is null, creating pipeline ${jobName}"
+			job = folder.createProject(WorkflowJob.class, jobName);
+		}
 
-def triggerJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath) {
-	echo "trigger job(s)...."
+		// update job content
+		ParameterDefinition paramDef = new StringParameterDefinition("VM_CREATOR", "vmware");
+		customPipeline.addProperty(new ParametersDefinitionProperty(paramDef));
+
+		customPipeline.buildDiscarder = new hudson.tasks.LogRotator(10, 20, -1, -1)
+		
+		CloneOption cloneOption = new CloneOption(false, true, null, 60);
+		cloneOption.setDepth(0);
+		CheckoutOption checkoutOption = new CheckoutOption(60);
+		def gitScmExtensionList = [cloneOption, checkoutOption];
+
+		CpsScmFlowDefinition cpsScmFlowDefinition = new CpsScmFlowDefinition(
+			new GitSCM(
+				Collections.singletonList(new UserRemoteConfig("git@dsgithub.trendmicro.com:deep-security/lift-project.git", null, null, "b6daa83e-1669-4908-baee-554f27a49a40")),
+				Collections.singletonList(new BranchSpec("master")),
+				false, 
+				Collections.<SubmoduleConfig>emptyList(),
+				null,
+				null,
+				gitScmExtensionList
+			),
+			"pipelines/lift-docker.groovy");
+		customPipeline.setDefinition(cpsScmFlowDefinition);
+		
+		echo "trigger job ${jobName}"
+	}
 }
 
 node() {
@@ -107,7 +137,6 @@ node() {
 	}
 	
 	updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
-	triggerJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 }
 
 /*
