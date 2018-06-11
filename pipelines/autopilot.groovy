@@ -52,7 +52,7 @@ def getJobList(currentPath) {
 def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath) {
 	echo "update job(s)...."
 	
-	def liftFolder = Jenkins.getInstance().getItem(defaultFolderName)
+	Folder liftFolder = Jenkins.getInstance().getItem(defaultFolderName)
 	if(liftFolder == null) {
 		liftFolder = Jenkins.getInstance().createProject(Folder.class, defaultFolderName);
 	}
@@ -70,10 +70,10 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 		echo "componentList: ${componentList}"
 
 		// create folder
-		def folder = liftFolder
+		Folder folder = liftFolder
 		for(j=0; j<componentList.size()-1; j++) {
 			// if this is the 1st folder, add this folder in the view
-			folderInstance = folder.getItem(componentList[i]);
+			Folder folderInstance = folder.getItem(componentList[i]);
 			if(folderInstance == null) {
 				echo "folder is null, creating folder ${componentList[i]}"
 				folder = folder.createProject(Folder.class, componentList[i])
