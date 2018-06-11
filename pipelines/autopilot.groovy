@@ -41,7 +41,7 @@ def getCurrentPath(currentHour) {
 def getJobList(currentPath) {
     def jobList = []
     (currentPath as File).eachFileRecurse groovy.io.FileType.FILES, {
-        jobList << it
+        jobList << it.getCanonicalPath()
     }
 	echo "Job list: ${jobList}"
 	
