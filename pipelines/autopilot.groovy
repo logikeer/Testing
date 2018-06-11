@@ -48,7 +48,7 @@ def getJobList(currentPath) {
 	return jobList
 }
 
-//@NonCPS
+@NonCPS
 def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath) {
 	echo "update job(s)...."
 	
@@ -65,7 +65,7 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 	for(i=0; i<jobList.size(); i++) {
 		echo "process job: ${jobList[i]}"
 		
-		def parameterFile = load jobList[i]
+		def parameterFile = load "C:\\Program Files (x86)\\Jenkins\\workspace\\Pilot@3\\pipelines\\autopilot_params\\18\\Integration\\18.txt"
 		echo "###################### trace 1"
 		def parameterMap = parameterFile.getParameterMap()
 		echo "###################### trace 2"
