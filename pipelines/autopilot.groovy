@@ -110,10 +110,11 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 		def parameterMap = parameterFile.getParameterMap()
 		echo "###################### trace 2"
 		parameterMap.each { k, v ->
-			echo "string parameter: ${k} = ${v}"
+			println "${k}:${v}" 
+			//echo "string parameter: ${k} = ${v}"
 			
-			ParameterDefinition paramDef = new StringParameterDefinition("${k}", "${v}");
-			pipeline.addProperty(new ParametersDefinitionProperty(paramDef));
+			//ParameterDefinition paramDef = new StringParameterDefinition("${k}", "${v}");
+			//pipeline.addProperty(new ParametersDefinitionProperty(paramDef));
 		}
 		
 		pipeline.buildDiscarder = new hudson.tasks.LogRotator(10, 20, -1, -1)
