@@ -103,7 +103,7 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 
 		// update pipeline content
 		pipeline.removeProperty(ParametersDefinitionProperty.class);
-		def parameterFile = load('${jobList[i]}')
+		def parameterFile = load("${jobList[i]}")
 		echo "parameterFile is ${parameterFile}"
 		for (it in parameterFile.getParameterMap()) {
 			echo "${it.key} = ${it.value}"
