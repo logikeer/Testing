@@ -139,6 +139,8 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 }
 
 node() {
+	echo "workspace is ${WORKSPACE}"
+	
 	def defaultFolderName = 'Lift'
 	def defaultViewName = 'AutoPilot'
 
