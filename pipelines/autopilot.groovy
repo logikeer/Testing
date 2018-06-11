@@ -28,9 +28,9 @@ if(autoPilotView == null) {
 */
 
 def pullLiftBranch(lift_branch) {
-	echo "git is pulling ${lift_branch}"
+	echo "git is pulling ${lift_branch}..."
 	
-	checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: lift_branch]], 
+	checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/' + lift_branch]], 
 	         doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
 			 userRemoteConfigs: [[credentialsId: 'b6daa83e-1669-4908-baee-554f27a49a40', 
 			 url: 'git@github.com:logikeer/Testing.git']]]
