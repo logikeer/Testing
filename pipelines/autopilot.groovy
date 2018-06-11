@@ -48,7 +48,6 @@ def getJobList(currentPath) {
 	return jobList
 }
 
-@NonCPS
 def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath) {
 	echo "update job(s)...."
 	
@@ -89,7 +88,7 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 		
 		// create job
 		String jobName = componentList[componentList.size()-1]
-		WorkflowJob job = customFolder.getItem(jobName)
+		WorkflowJob job = folder.getItem(jobName)
 		if(job == null) {
 			echo "pipeline is null, creating pipeline ${jobName}"
 			job = folder.createProject(WorkflowJob.class, jobName);
