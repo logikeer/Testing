@@ -52,7 +52,7 @@ def getJobList(currentPath) {
 def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath) {
 	echo "update job(s)...."
 	
-	Folder liftFolder = Jenkins.getInstance().getItem(defaultFolderName)
+	def liftFolder = Jenkins.getInstance().getItem(defaultFolderName)
 	if(liftFolder == null) {
 		liftFolder = Jenkins.getInstance().createProject(Folder.class, defaultFolderName);
 	}
@@ -70,7 +70,7 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 		echo "componentList: ${componentList}"
 
 		// create folder
-		Folder folder = liftFolder
+		def folder = liftFolder
 		for(j=0; j<componentList.size()-1; j++) {
 			// if this is the 1st folder, add this folder in the view
 			folderInstance = folder.getItem(componentList[i]);
@@ -97,6 +97,8 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 		if(pipeline == null) {
 			echo "pipeline is null, creating pipeline ${pipelineName}"
 			pipeline = folder.createProject(WorkflowJob.class, pipelineName);
+		} else {
+			echo "go to pipeline ${pipelineName}"
 		}
 
 		// update pipeline content
@@ -112,7 +114,7 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 
 		CpsScmFlowDefinition cpsScmFlowDefinition = new CpsScmFlowDefinition(
 			new GitSCM(
-				Collections.singletonList(new UserRemoteConfig("git@dsgithub.trendmicro.com:deep-security/lift-project.git", null, null, "b6daa83e-1669-4908-baee-554f27a49a40")),
+				Collections.singletonList(new UserRemoteConfig("git@10.45.22.48:deep-security/lift-project.git", null, null, "b6daa83e-1669-4908-baee-554f27a49a40")),
 				Collections.singletonList(new BranchSpec("master")),
 				false, 
 				Collections.<SubmoduleConfig>emptyList(),
@@ -145,42 +147,5 @@ node() {
 }
 
 /*
-Folder customFolder = Jenkins.getInstance().getItem("customFolder")
-if(customFolder == null) {
-    echo "folder is null, creating folder..."
-    customFolder = Jenkins.getInstance().createProject(Folder.class, "customFolder");
-    customView.add(customFolder)
-
-}
-
-WorkflowJob customPipeline = customFolder.getItem("customPipeline")
-if(customPipeline == null) {
-    echo "pipeline is null, creating pipeline..."
-    customPipeline = customFolder.createProject(WorkflowJob.class, "customPipeline");
-}
-
-ParameterDefinition paramDef = new StringParameterDefinition("VM_CREATOR", "vmware");
-customPipeline.addProperty(new ParametersDefinitionProperty(paramDef));
-
-CloneOption cloneOption = new CloneOption(false, true, null, 60);
-cloneOption.setDepth(0);
-CheckoutOption checkoutOption = new CheckoutOption(60);
-def gitScmExtensionList = [cloneOption, checkoutOption];
-
-CpsScmFlowDefinition cpsScmFlowDefinition = new CpsScmFlowDefinition(
-    new GitSCM(
-        Collections.singletonList(new UserRemoteConfig("git@10.45.22.48:deep-security/lift-project.git", null, null, "b6daa83e-1669-4908-baee-554f27a49a40")),
-        Collections.singletonList(new BranchSpec("master")),
-        false, 
-        Collections.<SubmoduleConfig>emptyList(),
-        null,
-        null,
-        gitScmExtensionList
-    ),
-    "pipelines/lift-docker.groovy");
-
-customPipeline.setDefinition(cpsScmFlowDefinition);
-customPipeline.buildDiscarder = new hudson.tasks.LogRotator(10,20,-1,-1)
-
 WorkflowRun workflowRun = customPipeline.scheduleBuild2(0).waitForStart();
 */
