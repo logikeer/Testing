@@ -105,10 +105,11 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 
 		// update pipeline content
 		pipeline.removeProperty(ParametersDefinitionProperty.class);
-		def parameterPath = jobList[i].replace("${WORKSPACE}", "")
-		def parameterFile = load "${parameterPath}"
-		echo "parameterFile is ${parameterFile}"
-		parameterFile.getParameterMap().each { k, v ->
+		def parameterFile = load "${jobList[i]}"
+		echo "###################### trace 1"
+		def parameterMap = parameterFile.getParameterMap()
+		echo "###################### trace 2"
+		parameterMap.each { k, v ->
 			echo "string parameter: ${k} = ${v}"
 			
 			ParameterDefinition paramDef = new StringParameterDefinition("${k}", "${v}");
