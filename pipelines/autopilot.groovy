@@ -77,6 +77,8 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 			if(folderInstance == null) {
 				echo "folder is null, creating folder ${componentList[i]}"
 				folder = folder.createProject(Folder.class, componentList[i])
+				
+				// add the 1st folder in the view
 				if(j == 0) {
 					echo "add folder ${componentList[i]} in view"
 					autoPilotView.add(folder)
@@ -87,19 +89,21 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 			}
 		}
 		
-		// create job
-		String jobName = componentList[componentList.size()-1]
-		WorkflowJob job = folder.getItem(jobName)
-		if(job == null) {
-			echo "pipeline is null, creating pipeline ${jobName}"
-			job = folder.createProject(WorkflowJob.class, jobName);
+		// create pipeline
+		String pipelineName = componentList[componentList.size()-1]
+		echo "pipeline name is ${pipelineName}"
+		
+		WorkflowJob pipeline = folder.getItem(pipelineName)
+		if(pipeline == null) {
+			echo "pipeline is null, creating pipeline ${pipelineName}"
+			pipeline = folder.createProject(WorkflowJob.class, pipelineName);
 		}
 
-		// update job content
+		// update pipeline content
 		ParameterDefinition paramDef = new StringParameterDefinition("VM_CREATOR", "vmware");
-		job.addProperty(new ParametersDefinitionProperty(paramDef));
+		pipeline.addProperty(new ParametersDefinitionProperty(paramDef));
 
-		job.buildDiscarder = new hudson.tasks.LogRotator(10, 20, -1, -1)
+		pipeline.buildDiscarder = new hudson.tasks.LogRotator(10, 20, -1, -1)
 		
 		CloneOption cloneOption = new CloneOption(false, true, null, 60);
 		cloneOption.setDepth(0);
@@ -117,9 +121,9 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 				gitScmExtensionList
 			),
 			"pipelines/lift-docker.groovy");
-		job.setDefinition(cpsScmFlowDefinition);
+		pipeline.setDefinition(cpsScmFlowDefinition);
 		
-		echo "trigger job ${jobName}"
+		echo "trigger pipeline ${pipelineName}"
 	}
 }
 
