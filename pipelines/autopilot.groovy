@@ -65,11 +65,6 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 	for(i=0; i<jobList.size(); i++) {
 		echo "process job: ${jobList[i]}"
 		
-		def parameterFile = load "C:\\Program Files (x86)\\Jenkins\\workspace\\Pilot@3\\pipelines\\autopilot_params\\18\\Integration\\18.txt"
-		echo "###################### trace 1"
-		def parameterMap = parameterFile.getParameterMap()
-		echo "###################### trace 2"
-		
 		String extendPath = jobList[i] - (currentPath + '\\')
 		echo "extendPath: ${extendPath}"
 		
@@ -146,6 +141,11 @@ node() {
 	def defaultFolderName = 'Lift'
 	def defaultViewName = 'AutoPilot'
 
+		def parameterFile = load "C:\\Program Files (x86)\\Jenkins\\workspace\\Pilot@3\\pipelines\\autopilot_params\\18\\Integration\\18.txt"
+		echo "###################### trace 1"
+		def parameterMap = parameterFile.getParameterMap()
+		echo "###################### ${parameterMap}"
+		
 	pullLiftBranch('test/dynamic_pipeline_in_Lift')
     def currentHour = getCurrentHour()
 	def currentPath = getCurrentPath(currentHour)
