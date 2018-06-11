@@ -11,6 +11,9 @@ import org.jenkinsci.plugins.workflow.job.WorkflowJob
 import org.jenkinsci.plugins.workflow.job.WorkflowRun
 
 
+def defaultFolderName = 'Lift'
+def defaultViewName = 'AutoPilot'
+
 //def jobs = Hudson.instance.getAllItems(WorkflowJob)*.fullName
 //echo "${jobs}"
 
@@ -44,14 +47,13 @@ def getJobList(currentPath) {
         jobList << it
     }
 	echo "Job list: ${jobList}"
+	
+	return jobList
 }
 
 def updateJobInJenkins(jobList) {
 	echo "update job(s)...."
 	
-	def defaultFolderName = 'Lift'
-	def defaultViewName = 'AutoPilot'
-
 	Folder liftFolder = Jenkins.getInstance().getItem(defaultFolderName)
 	if(liftFolder == null) {
 		liftFolder = Jenkins.getInstance().createProject(Folder.class, defaultFolderName);
@@ -60,6 +62,10 @@ def updateJobInJenkins(jobList) {
 	def autoPilotView = liftFolder.getView(defaultViewName)
 	if(autoPilotView == null) {
 		autoPilotView = liftFolder.addView(new ListView(defaultViewName))
+	}
+	
+	jobList.each {
+		print it
 	}
 }
 
@@ -73,8 +79,13 @@ node() {
 	def currentPath = getCurrentPath(currentHour)
 	
 	def jobList = getJobList(currentPath)
-	updateJobInJenkins(jobList)
-	triggerJobInJenkins(jobList)
+	if(!jobList) {
+		echo "there is no job(s) now..."
+		System.exit(0)
+	}
+	
+	updateJobInJenkins(jobList, currentPath)
+	triggerJobInJenkins(jobList, currentPath)
 }
 
 /*
