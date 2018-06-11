@@ -48,6 +48,7 @@ def getJobList(currentPath) {
 	return jobList
 }
 
+@NonCPS
 def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath) {
 	echo "update job(s)...."
 	
@@ -96,9 +97,9 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 
 		// update job content
 		ParameterDefinition paramDef = new StringParameterDefinition("VM_CREATOR", "vmware");
-		customPipeline.addProperty(new ParametersDefinitionProperty(paramDef));
+		job.addProperty(new ParametersDefinitionProperty(paramDef));
 
-		customPipeline.buildDiscarder = new hudson.tasks.LogRotator(10, 20, -1, -1)
+		job.buildDiscarder = new hudson.tasks.LogRotator(10, 20, -1, -1)
 		
 		CloneOption cloneOption = new CloneOption(false, true, null, 60);
 		cloneOption.setDepth(0);
@@ -116,7 +117,7 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 				gitScmExtensionList
 			),
 			"pipelines/lift-docker.groovy");
-		customPipeline.setDefinition(cpsScmFlowDefinition);
+		job.setDefinition(cpsScmFlowDefinition);
 		
 		echo "trigger job ${jobName}"
 	}
