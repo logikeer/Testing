@@ -65,6 +65,11 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 	for(i=0; i<jobList.size(); i++) {
 		echo "process job: ${jobList[i]}"
 		
+		def parameterFile = load jobList[i]
+		echo "###################### trace 1"
+		def parameterMap = parameterFile.getParameterMap()
+		echo "###################### trace 2"
+		
 		String extendPath = jobList[i] - (currentPath + '\\')
 		echo "extendPath: ${extendPath}"
 		
@@ -105,10 +110,6 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 
 		// update pipeline content
 		pipeline.removeProperty(ParametersDefinitionProperty.class);
-		def parameterFile = evaluate(new File(jobList[i]))
-		echo "###################### trace 1"
-		def parameterMap = parameterFile.getParameterMap()
-		echo "###################### trace 2"
 		parameterMap.each { k, v ->
 			println "${k}:${v}" 
 			//echo "string parameter: ${k} = ${v}"
