@@ -104,8 +104,12 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 		}
 
 		// update pipeline content
-		//pipeline.removeProperty(ParametersDefinitionProperty.class);
+		pipeline.removeProperty(ParametersDefinitionProperty.class);
+		try {
 		def parameterFile = load jobList[i]
+		} catch (e) {
+		echo "${e}"
+		}
 		echo "###################### trace 1"
 		def parameterMap = parameterFile.getParameterMap()
 		echo "###################### trace 2"
