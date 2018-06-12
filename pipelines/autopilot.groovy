@@ -150,6 +150,7 @@ def updatePipelineInJenkins(pipelineFilePath, currentPath, parameterMap) {
 	pipeline.setDefinition(cpsScmFlowDefinition);
 	
 	echo "trigger pipeline ${pipeline.getName()}"
+	WorkflowRun workflowRun = pipeline.scheduleBuild2(0).waitForStart();
 }
 
 node() {
@@ -168,7 +169,3 @@ node() {
 		updatePipelineInJenkins(pipelineFileList[i], currentPath, parameterMap)
 	}
 }
-
-/*
-WorkflowRun workflowRun = customPipeline.scheduleBuild2(0).waitForStart();
-*/
