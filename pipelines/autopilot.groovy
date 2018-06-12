@@ -161,24 +161,30 @@ def updatePipelineInJenkins(pipelineFilePath, currentPath, parameterMap) {
 }
 
 node() {
-	pullLiftBranch('test/dynamic_pipeline_in_Lift')
-	
-    def currentHour = getCurrentHour()
-	def currentPath = getCurrentPath(currentHour)
-	if(currentPath.size() == 0) {
-		echo "this path does not exist..."
-		return
+    def pipelineFileList = []
+    def currentPath = ''
+    
+    stage ('Git') {
+        pullLiftBranch("${params.LIFT_BRANCH}")
+    }
+	stage ('Parameter') {
+        def currentHour = getCurrentHour()
+        currentPath = getCurrentPath(currentHour)
+        if(currentPath.size() == 0) {
+            echo "this path does not exist..."
+            return
+        }
+
+        pipelineFileList = getPipelineFileList(currentPath)
+        if(!pipelineFileList) {
+            echo "there is no pipeline now..."
+            return
+        }
 	}
-	
-	def pipelineFileList = []
-	pipelineFileList = getPipelineFileList(currentPath)
-	if(!pipelineFileList) {
-		echo "there is no pipeline now..."
-		return
-	}
-	
-	for(i=0; i<pipelineFileList.size(); i++) {
-		def parameterMap = getParameterMap(pipelineFileList[i])
-		updatePipelineInJenkins(pipelineFileList[i], currentPath, parameterMap)
-	}
+    stage ('Pipeline') {
+        for(i=0; i<pipelineFileList.size(); i++) {
+            def parameterMap = getParameterMap(pipelineFileList[i])
+            updatePipelineInJenkins(pipelineFileList[i], currentPath, parameterMap)
+        }
+    }
 }
