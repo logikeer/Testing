@@ -57,8 +57,11 @@ def getParameterMap(filePath) {
 
 @NonCPS
 def getJobInJenkins(jobPath) {
+	def defaultFolderName = 'Lift'
+	def defaultViewName = 'AutoPilot'
+	
 	echo "getting job: ${jobPath}"
-
+	
 	Folder liftFolder = Jenkins.getInstance().getItem(defaultFolderName)
 	if(liftFolder == null) {
 		liftFolder = Jenkins.getInstance().createProject(Folder.class, defaultFolderName);
@@ -110,7 +113,7 @@ def getJobInJenkins(jobPath) {
 	return pipeline
 }
 
-def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath) {
+def updateJobInJenkins(jobList, currentPath) {
 	echo "update job(s)...."
 	
 	for(i=0; i<jobList.size(); i++) {
@@ -151,9 +154,6 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 }
 
 node() {
-	def defaultFolderName = 'Lift'
-	def defaultViewName = 'AutoPilot'
-
 	pullLiftBranch('test/dynamic_pipeline_in_Lift')
     def currentHour = getCurrentHour()
 	def currentPath = getCurrentPath(currentHour)
@@ -164,7 +164,7 @@ node() {
 		System.exit(0)
 	}
 	
-	updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
+	updateJobInJenkins(jobList, currentPath)
 }
 
 /*
