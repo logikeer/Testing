@@ -37,7 +37,7 @@ def getCurrentPath(currentHour) {
 	
 	if (!fileExists(currentPath)) {
 		echo "this path does not exist"
-		System.exit(0)
+		return ""
 	}
 	return currentPath
 }
@@ -165,12 +165,16 @@ node() {
 	
     def currentHour = getCurrentHour()
 	def currentPath = getCurrentPath(currentHour)
+	if(currentPath.size() == 0) {
+		echo "this path does not exist..."
+		return
+	}
 	
 	def pipelineFileList = []
 	pipelineFileList = getPipelineFileList(currentPath)
 	if(!pipelineFileList) {
 		echo "there is no pipeline now..."
-		System.exit(0)
+		return
 	}
 	
 	for(i=0; i<pipelineFileList.size(); i++) {
