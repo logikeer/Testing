@@ -50,6 +50,8 @@ def getJobList(currentPath) {
 
 def getParameterMap(filePath) {
 	def parameterScript = load filePath
+	echo "loaded: ${filePath}"
+	
 	return parameterScript.getParameterMap()
 }
 
