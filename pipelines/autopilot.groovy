@@ -56,7 +56,7 @@ def getParameterMap(filePath) {
 }
 
 @NonCPS
-def getJobInJenkins(jobPath) {
+def getJobInJenkins(jobPath, currentPath) {
 	def defaultFolderName = 'Lift'
 	def defaultViewName = 'AutoPilot'
 	
@@ -117,7 +117,7 @@ def updateJobInJenkins(jobList, currentPath) {
 	echo "update job(s)...."
 	
 	for(i=0; i<jobList.size(); i++) {
-		def pipeline = getJobInJenkins(jobList[i])
+		def pipeline = getJobInJenkins(jobList[i], currentPath)
 
 		// update pipeline content
 		pipeline.removeProperty(ParametersDefinitionProperty.class);
