@@ -161,8 +161,9 @@ node() {
     def currentHour = getCurrentHour()
 	def currentPath = getCurrentPath(currentHour)
 	
+	def pipelineFileList = []
 	if (fileExists(currentPath)) {
-		def pipelineFileList = getPipelineFileList(currentPath)
+		pipelineFileList = getPipelineFileList(currentPath)
 	} else {
 		echo "there is no pipeline now..."
 		System.exit(0)
