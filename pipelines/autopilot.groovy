@@ -41,8 +41,11 @@ def getCurrentPath(currentHour) {
 @NonCPS
 def getPipelineFileList(currentPath) {
     def pipelineFileList = []
-	(currentPath as File).eachFileRecurse groovy.io.FileType.FILES, {
-		pipelineFileList << it.getCanonicalPath()
+	
+	if (fileExists(currentPath)) {
+		(currentPath as File).eachFileRecurse groovy.io.FileType.FILES, {
+			pipelineFileList << it.getCanonicalPath()
+		}
 	}
 	echo "pipeline file list: ${pipelineFileList}"
 	
