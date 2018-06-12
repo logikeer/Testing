@@ -38,14 +38,14 @@ def getCurrentPath(currentHour) {
 	return currentPath
 }
 
-def getJobList(currentPath) {
-    def jobList = []
+def getPipelineFileList(currentPath) {
+    def pipelineFileList = []
     (currentPath as File).eachFileRecurse groovy.io.FileType.FILES, {
-        jobList << it.getCanonicalPath()
+        pipelineFileList << it.getCanonicalPath()
     }
-	echo "Job list: ${jobList}"
+	echo "pipeline file list: ${pipelineFileList}"
 	
-	return jobList
+	return pipelineFileList
 }
 
 def getParameterMap(filePath) {
@@ -56,11 +56,11 @@ def getParameterMap(filePath) {
 }
 
 @NonCPS
-def getJobInJenkins(jobPath, currentPath) {
+def getPipelineInJenkins(jobPath, currentPath) {
 	def defaultFolderName = 'Lift'
 	def defaultViewName = 'AutoPilot'
 	
-	echo "getting job: ${jobPath}"
+	echo "getting pipeline: ${jobPath}"
 	
 	Folder liftFolder = Jenkins.getInstance().getItem(defaultFolderName)
 	if(liftFolder == null) {
@@ -113,44 +113,40 @@ def getJobInJenkins(jobPath, currentPath) {
 	return pipeline
 }
 
-def updateJobInJenkins(jobList, currentPath) {
-	echo "update job(s)...."
-	
-	for(i=0; i<jobList.size(); i++) {
-		def pipeline = getJobInJenkins(jobList[i], currentPath)
+@NonCPS
+def updatePipelineInJenkins(pipelineFilePath, currentPath, parameterMap) {
+	echo "updating pipeline: ${pipelineFilePath}"
 
-		// update pipeline content
-		pipeline.removeProperty(ParametersDefinitionProperty.class);
-		def parameterMap = getParameterMap(jobList[i])
-		parameterMap.each { k, v ->
-			echo "job parameter: ${k} = ${v}"
+	def pipeline = getPipelineInJenkins(pipelineFilePath, currentPath)
+
+	// update pipeline content
+	pipeline.removeProperty(ParametersDefinitionProperty.class);
+	parameterMap.each { k, v ->
+		echo "pipeline parameter: ${k} = ${v}"
 			
-			ParameterDefinition paramDef = new StringParameterDefinition("${k}", "${v}");
-			pipeline.addProperty(new ParametersDefinitionProperty(paramDef));
-		}
-		
-		pipeline.buildDiscarder = new hudson.tasks.LogRotator(10, 20, -1, -1)
-		
-		CloneOption cloneOption = new CloneOption(false, true, null, 60);
-		cloneOption.setDepth(0);
-		CheckoutOption checkoutOption = new CheckoutOption(60);
-		def gitScmExtensionList = [cloneOption, checkoutOption];
-
-		CpsScmFlowDefinition cpsScmFlowDefinition = new CpsScmFlowDefinition(
-			new GitSCM(
-				Collections.singletonList(new UserRemoteConfig("git@10.45.22.48:deep-security/lift-project.git", null, null, "b6daa83e-1669-4908-baee-554f27a49a40")),
-				Collections.singletonList(new BranchSpec("master")),
-				false, 
-				Collections.<SubmoduleConfig>emptyList(),
-				null,
-				null,
-				gitScmExtensionList
-			),
-			"pipelines/lift-docker.groovy");
-		pipeline.setDefinition(cpsScmFlowDefinition);
-		
-		echo "trigger pipeline ${pipelineName}"
+		ParameterDefinition paramDef = new StringParameterDefinition("${k}", "${v}");
+		pipeline.addProperty(new ParametersDefinitionProperty(paramDef));
 	}
+
+	pipeline.buildDiscarder = new hudson.tasks.LogRotator(10, 20, -1, -1)
+		
+	CloneOption cloneOption = new CloneOption(false, true, null, 60);
+	cloneOption.setDepth(0);
+	CheckoutOption checkoutOption = new CheckoutOption(60);
+	def gitScmExtensionList = [cloneOption, checkoutOption];
+
+	CpsScmFlowDefinition cpsScmFlowDefinition = new CpsScmFlowDefinition(
+		new GitSCM(
+			Collections.singletonList(new UserRemoteConfig("git@10.45.22.48:deep-security/lift-project.git", null, null, "b6daa83e-1669-4908-baee-554f27a49a40")),
+			Collections.singletonList(new BranchSpec("master")),
+			false, 
+			Collections.<SubmoduleConfig>emptyList(),
+			null,
+			null,
+			gitScmExtensionList
+		),
+		"pipelines/lift-docker.groovy");
+	pipeline.setDefinition(cpsScmFlowDefinition);
 }
 
 node() {
@@ -158,13 +154,18 @@ node() {
     def currentHour = getCurrentHour()
 	def currentPath = getCurrentPath(currentHour)
 	
-	def jobList = getJobList(currentPath)
-	if(!jobList) {
-		echo "there is no job(s) now..."
+	def pipelineFileList = getPipelineFileList(currentPath)
+	if(!pipelineFileList) {
+		echo "there is no pipeline now..."
 		System.exit(0)
 	}
 	
-	updateJobInJenkins(jobList, currentPath)
+	for(i=0; i<pipelineFileList.size(); i++) {
+		def parameterMap = getParameterMap(pipelineFileList[i])
+		updatePipelineInJenkins(pipelineFileList[i], currentPath, parameterMap)
+	}
+	
+	echo "trigger pipeline ${pipelineName}"
 }
 
 /*
