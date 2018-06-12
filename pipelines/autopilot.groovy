@@ -126,6 +126,7 @@ def updatePipelineInJenkins(pipelineFilePath, currentPath, parameterMap) {
 			
 		ParameterDefinition paramDef = new StringParameterDefinition("${k}", "${v}");
 		pipeline.addProperty(new ParametersDefinitionProperty(paramDef));
+		pipeline.save();
 	}
 
 	pipeline.buildDiscarder = new hudson.tasks.LogRotator(10, 20, -1, -1)
