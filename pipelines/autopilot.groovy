@@ -48,6 +48,11 @@ def getJobList(currentPath) {
 	return jobList
 }
 
+def getParameterMap(filePath) {
+	def parameterFile = load filePath
+	return parameterFile.getParameterMap()
+}
+
 @NonCPS
 def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath) {
 	echo "update job(s)...."
@@ -105,12 +110,12 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 
 		// update pipeline content
 		pipeline.removeProperty(ParametersDefinitionProperty.class);
+		def parameterMap = getParameterMap()
 		parameterMap.each { k, v ->
-			println "${k}:${v}" 
-			//echo "string parameter: ${k} = ${v}"
+			echo "job parameter: ${k} = ${v}"
 			
-			//ParameterDefinition paramDef = new StringParameterDefinition("${k}", "${v}");
-			//pipeline.addProperty(new ParametersDefinitionProperty(paramDef));
+			ParameterDefinition paramDef = new StringParameterDefinition("${k}", "${v}");
+			pipeline.addProperty(new ParametersDefinitionProperty(paramDef));
 		}
 		
 		pipeline.buildDiscarder = new hudson.tasks.LogRotator(10, 20, -1, -1)
@@ -141,11 +146,6 @@ node() {
 	def defaultFolderName = 'Lift'
 	def defaultViewName = 'AutoPilot'
 
-		def parameterFile = load "C:\\Program Files (x86)\\Jenkins\\workspace\\Pilot@3\\pipelines\\autopilot_params\\18\\Integration\\18.txt"
-		echo "###################### trace 1"
-		def parameterMap = parameterFile.getParameterMap()
-		echo "###################### ${parameterMap}"
-		
 	pullLiftBranch('test/dynamic_pipeline_in_Lift')
     def currentHour = getCurrentHour()
 	def currentPath = getCurrentPath(currentHour)
