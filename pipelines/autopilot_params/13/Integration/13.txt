@@ -1,15 +1,16 @@
-def setupEnvironmentVariables() {
-    env.VM_CREATOR = "vmware"
-    env.DB_ENGINE = "##Random"
-    env.DSM_PLATFORM = "rhel7x64"
-    env.DSM_INSTALLER_URL = "##11.1HotFix"
-    env.DSA_PLATFORM = "cloudlinux7x64"
-    env.DSA_INSTALLER_URL_TO_UPGRADE_FROM = "##10.0HotFix"
-    env.DSA_INSTALLER_URL_TO_UPGRADE_TO = "##11.1HotFix"
-    env.TEST_TYPE = "DSA_Upgrade"
-    env.TESTCASE_XML = ""
-    env.TESTCASE_SUITENAME = "DSA Upgrade from 10.0"
-    env.TESTRAIL_PLANID = "40045"
+def getParameterMap() {
+    def map = [ 'VM_CREATOR':'vmware',
+				'DB_ENGINE':'##Random',
+				'DSM_PLATFORM':'rhel7x64',
+				'DSM_INSTALLER_URL':'##11.1HotFix',
+				'DSA_PLATFORM':'cloudlinux7x64',
+				'DSA_INSTALLER_URL_TO_UPGRADE_FROM':'##10.0HotFix',
+				'DSA_INSTALLER_URL_TO_UPGRADE_TO':'##11.1HotFix',
+				'TEST_TYPE':'DSA_Upgrade',
+				'TESTCASE_XML':'',
+				'TESTCASE_SUITENAME':'DSA Upgrade from 10.0',
+				'TESTRAIL_PLANID':'40045' ]
+	return map
 }
 
 return this
