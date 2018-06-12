@@ -42,10 +42,8 @@ def getCurrentPath(currentHour) {
 def getPipelineFileList(currentPath) {
     def pipelineFileList = []
 	
-	if (fileExists(currentPath)) {
-		(currentPath as File).eachFileRecurse groovy.io.FileType.FILES, {
-			pipelineFileList << it.getCanonicalPath()
-		}
+	(currentPath as File).eachFileRecurse groovy.io.FileType.FILES, {
+		pipelineFileList << it.getCanonicalPath()
 	}
 	echo "pipeline file list: ${pipelineFileList}"
 	
@@ -163,7 +161,13 @@ node() {
     def currentHour = getCurrentHour()
 	def currentPath = getCurrentPath(currentHour)
 	
-	def pipelineFileList = getPipelineFileList(currentPath)
+	if (fileExists(currentPath)) {
+		def pipelineFileList = getPipelineFileList(currentPath)
+	} else {
+		echo "there is no pipeline now..."
+		System.exit(0)
+	}
+	
 	if(!pipelineFileList) {
 		echo "there is no pipeline now..."
 		System.exit(0)
