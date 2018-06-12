@@ -83,18 +83,18 @@ def getPipelineInJenkins(jobPath, currentPath) {
 	Folder folder = liftFolder
 	for(j=0; j<componentList.size()-1; j++) {
 		// if this is the 1st folder, add this folder in the view
-		Folder folderInstance = folder.getItem(componentList[i]);
+		Folder folderInstance = folder.getItem(componentList[j]);
 		if(folderInstance == null) {
-			echo "folder is null, creating folder ${componentList[i]}"
-			folder = folder.createProject(Folder.class, componentList[i])
+			echo "folder is null, creating folder ${componentList[j]}"
+			folder = folder.createProject(Folder.class, componentList[j])
 				
 			// add the 1st folder in the view
 			if(j == 0) {
-				echo "add folder ${componentList[i]} in view"
+				echo "add folder ${componentList[j]} in view"
 				autoPilotView.add(folder)
 			}
 		} else {
-			echo "go to folder ${componentList[i]}"
+			echo "go to folder ${componentList[j]}"
 			folder = folderInstance
 		}
 	}
