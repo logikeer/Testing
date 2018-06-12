@@ -121,13 +121,13 @@ def updatePipelineInJenkins(pipelineFilePath, currentPath, parameterMap) {
 
 	// update pipeline content
 	pipeline.removeProperty(ParametersDefinitionProperty.class);
+	
+	def paramDefList = []
 	parameterMap.each { k, v ->
 		echo "pipeline parameter: ${k} = ${v}"
-			
-		ParameterDefinition paramDef = new StringParameterDefinition("${k}", "${v}");
-		pipeline.addProperty(new ParametersDefinitionProperty(paramDef));
-		pipeline.save();
+		paramDefList << new StringParameterDefinition("${k}", "${v}");
 	}
+	pipeline.addProperty(new ParametersDefinitionProperty(paramDefList));
 
 	pipeline.buildDiscarder = new hudson.tasks.LogRotator(10, 20, -1, -1)
 		
