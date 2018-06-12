@@ -49,8 +49,8 @@ def getJobList(currentPath) {
 }
 
 def getParameterMap(filePath) {
-	def parameterFile = load filePath
-	return parameterFile.getParameterMap()
+	def parameterScript = load filePath
+	return parameterScript.getParameterMap()
 }
 
 @NonCPS
@@ -110,7 +110,7 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 
 		// update pipeline content
 		pipeline.removeProperty(ParametersDefinitionProperty.class);
-		def parameterMap = getParameterMap()
+		def parameterMap = getParameterMap(jobList[i])
 		parameterMap.each { k, v ->
 			echo "job parameter: ${k} = ${v}"
 			
