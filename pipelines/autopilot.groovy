@@ -147,6 +147,8 @@ def updatePipelineInJenkins(pipelineFilePath, currentPath, parameterMap) {
 		),
 		"pipelines/lift-docker.groovy");
 	pipeline.setDefinition(cpsScmFlowDefinition);
+	
+	echo "trigger pipeline ${pipelineName}"
 }
 
 node() {
@@ -164,8 +166,6 @@ node() {
 		def parameterMap = getParameterMap(pipelineFileList[i])
 		updatePipelineInJenkins(pipelineFileList[i], currentPath, parameterMap)
 	}
-	
-	echo "trigger pipeline ${pipelineName}"
 }
 
 /*
