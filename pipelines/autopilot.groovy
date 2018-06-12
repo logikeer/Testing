@@ -162,7 +162,8 @@ node() {
 	def currentPath = getCurrentPath(currentHour)
 	
 	def pipelineFileList = []
-	if (fileExists(currentPath)) {
+	def folder = new File(currentPath)
+	if (folder.exists()) {
 		pipelineFileList = getPipelineFileList(currentPath)
 	} else {
 		echo "there is no pipeline now..."
