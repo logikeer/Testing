@@ -158,18 +158,12 @@ def updatePipelineInJenkins(pipelineFilePath, currentPath, parameterMap) {
 
 node() {
 	pullLiftBranch('test/dynamic_pipeline_in_Lift')
+	
     def currentHour = getCurrentHour()
 	def currentPath = getCurrentPath(currentHour)
 	
 	def pipelineFileList = []
-	def folder = new File(currentPath)
-	if (folder.exists()) {
-		pipelineFileList = getPipelineFileList(currentPath)
-	} else {
-		echo "there is no pipeline now..."
-		System.exit(0)
-	}
-	
+	pipelineFileList = getPipelineFileList(currentPath)
 	if(!pipelineFileList) {
 		echo "there is no pipeline now..."
 		System.exit(0)
