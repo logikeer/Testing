@@ -165,7 +165,7 @@ node() {
     def currentPath = ''
     
     stage ('Git') {
-        pullLiftBranch("${params.LIFT_BRANCH}")
+        pullLiftBranch('test/dynamic_pipeline_in_Lift')
     }
 	stage ('Parameter') {
         def currentHour = getCurrentHour()
