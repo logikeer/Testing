@@ -56,9 +56,9 @@ def getParameterMap(filePath) {
 }
 
 @NonCPS
-def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath) {
-	echo "update job(s)...."
-	
+def getJobInJenkins(jobPath) {
+	echo "getting job: ${jobPath}"
+
 	Folder liftFolder = Jenkins.getInstance().getItem(defaultFolderName)
 	if(liftFolder == null) {
 		liftFolder = Jenkins.getInstance().createProject(Folder.class, defaultFolderName);
@@ -68,47 +68,53 @@ def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath)
 	if(autoPilotView == null) {
 		autoPilotView = liftFolder.addView(new ListView(defaultViewName))
 	}
+
+	String extendPath = jobPath - (currentPath + '\\')
+	echo "extendPath: ${extendPath}"
+		
+	String[] componentList = extendPath.split('\\\\')
+	echo "componentList: ${componentList}"
+
+	// create folder
+	Folder folder = liftFolder
+	for(j=0; j<componentList.size()-1; j++) {
+		// if this is the 1st folder, add this folder in the view
+		Folder folderInstance = folder.getItem(componentList[i]);
+		if(folderInstance == null) {
+			echo "folder is null, creating folder ${componentList[i]}"
+			folder = folder.createProject(Folder.class, componentList[i])
+				
+			// add the 1st folder in the view
+			if(j == 0) {
+				echo "add folder ${componentList[i]} in view"
+				autoPilotView.add(folder)
+			}
+		} else {
+			echo "go to folder ${componentList[i]}"
+			folder = folderInstance
+		}
+	}
+		
+	// create pipeline
+	String pipelineName = componentList[componentList.size()-1]
+	echo "pipeline name is ${pipelineName}"
+		
+	WorkflowJob pipeline = folder.getItem(pipelineName)
+	if(pipeline == null) {
+		echo "pipeline is null, creating pipeline ${pipelineName}"
+		pipeline = folder.createProject(WorkflowJob.class, pipelineName);
+	} else {
+		echo "go to pipeline ${pipelineName}"
+	}
+	
+	return pipeline
+}
+
+def updateJobInJenkins(jobList, defaultFolderName, defaultViewName, currentPath) {
+	echo "update job(s)...."
 	
 	for(i=0; i<jobList.size(); i++) {
-		echo "process job: ${jobList[i]}"
-		
-		String extendPath = jobList[i] - (currentPath + '\\')
-		echo "extendPath: ${extendPath}"
-		
-		String[] componentList = extendPath.split('\\\\')
-		echo "componentList: ${componentList}"
-
-		// create folder
-		Folder folder = liftFolder
-		for(j=0; j<componentList.size()-1; j++) {
-			// if this is the 1st folder, add this folder in the view
-			Folder folderInstance = folder.getItem(componentList[i]);
-			if(folderInstance == null) {
-				echo "folder is null, creating folder ${componentList[i]}"
-				folder = folder.createProject(Folder.class, componentList[i])
-				
-				// add the 1st folder in the view
-				if(j == 0) {
-					echo "add folder ${componentList[i]} in view"
-					autoPilotView.add(folder)
-				}
-			} else {
-				echo "go to folder ${componentList[i]}"
-				folder = folderInstance
-			}
-		}
-		
-		// create pipeline
-		String pipelineName = componentList[componentList.size()-1]
-		echo "pipeline name is ${pipelineName}"
-		
-		WorkflowJob pipeline = folder.getItem(pipelineName)
-		if(pipeline == null) {
-			echo "pipeline is null, creating pipeline ${pipelineName}"
-			pipeline = folder.createProject(WorkflowJob.class, pipelineName);
-		} else {
-			echo "go to pipeline ${pipelineName}"
-		}
+		def pipeline = getJobInJenkins(jobList[i])
 
 		// update pipeline content
 		pipeline.removeProperty(ParametersDefinitionProperty.class);
