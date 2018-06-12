@@ -35,10 +35,9 @@ def getCurrentPath(currentHour) {
 	def currentPath = "${env.WORKSPACE}\\pipelines\\autopilot_params\\${currentHour}"
 	echo "current path is ${currentPath}"
 	
-	if (fileExists(currentPath)) {
-	echo "EXIST~~~~~~~~~~~~~~~~~~~~~~~"
-	} else {
-	echo "NON-EXIST###########################"
+	if (!fileExists(currentPath)) {
+		echo "this path does not exist"
+		System.exit(0)
 	}
 	return currentPath
 }
