@@ -38,6 +38,7 @@ def getCurrentPath(currentHour) {
 	return currentPath
 }
 
+@NonCPS
 def getPipelineFileList(currentPath) {
     def pipelineFileList = []
     (currentPath as File).eachFileRecurse groovy.io.FileType.FILES, {
